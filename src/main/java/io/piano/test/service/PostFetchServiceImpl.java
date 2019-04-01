@@ -29,10 +29,12 @@ public class PostFetchServiceImpl implements PostFetchService {
     @Override
     public Items fetchPostsByTitle(String queryToSearch) throws IOException {
         String response = requestServer(queryToSearch, QUERY_PARAMETER, SE_URL_TEMPLATE);
+
+        LOG.debug("Got response: " + response + " for query: " + queryToSearch);
         return  mapItems(response);
     }
 
-    private String requestServer(String queryToSearch, String queryParameterKey, String serverUrlTemplate) throws IOException {
+    protected String requestServer(String queryToSearch, String queryParameterKey, String serverUrlTemplate) throws IOException {
         HttpClient client = HttpClientBuilder.create().build();
         URI searchUrl = addParamToURL(queryParameterKey, queryToSearch, serverUrlTemplate);
         HttpGet request = new HttpGet(searchUrl.toString());

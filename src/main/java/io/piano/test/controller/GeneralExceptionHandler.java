@@ -16,7 +16,7 @@ public class GeneralExceptionHandler {
     ResponseEntity<Object> handleBadRequest(Exception ex) {
         LOG.error("Error while processing request", ex);
         return new ResponseEntity<>(
-                "Error while processing request: " + ex.fillInStackTrace(), HttpStatus.INTERNAL_SERVER_ERROR
+                "Error while processing request: " + ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR
         );
     }
 
