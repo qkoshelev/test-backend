@@ -1,0 +1,97 @@
+apply plugin: 'war'
+apply plugin: 'org.akhikhl.gretty'
+apply plugin: 'idea'
+apply plugin: "net.ltgt.apt"
+
+sourceCompatibility = 1.8
+version = '1.0'
+
+ext {
+    springVersion = '5.0.12.RELEASE'
+    log4jVersion = '2.6.2'
+    jacksonVersion = '2.9.6'
+    lombokVersion = '1.18.6'
+    apacheHttpVersion = '4.5.7'
+    commonIOVersion = '2.6'
+}
+
+configurations {
+    warOverlay
+    fileOverlay
+}
+
+description = 'Backend for piano test app'
+
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url "https://plugins.gradle.org/m2/" }
+        jcenter()
+    }
+    dependencies {
+        classpath 'org.akhikhl.gretty:gretty:2.0.0'
+        classpath "net.ltgt.gradle:gradle-apt-plugin:0.5"
+    }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '1.+'
+    compile group: 'org.springframework', name: 'spring-core', version: springVersion
+    compile group: 'org.springframework', name: 'spring-context', version: springVersion
+    compile group: 'org.springframework', name: 'spring-beans', version: springVersion
+    compile group: 'org.springframework', name: 'spring-web', version: springVersion
+    compile group: 'org.springframework', name: 'spring-webmvc', version: springVersion
+    compile group: 'org.apache.logging.log4j', name: 'log4j-1.2-api', version: log4jVersion
+    compile group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: log4jVersion
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: jacksonVersion
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombokVersion
+    compile group: 'org.apache.httpcomponents', name: 'httpclient', version: apacheHttpVersion
+    compile group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: jacksonVersion
+    compile group: 'commons-io', name: 'commons-io', version: commonIOVersion
+    apt 'org.projectlombok:lombok:1.18.6'
+    grettyRunnerJetty94 group: 'org.eclipse.jetty', name: 'jetty-servlets', version: '9.4.6.v20170531'
+    testCompile group: 'org.gradle', name: 'gradle-tooling-api', version: '5.2.1'
+}
+
+
+
+gretty {
+    afterEvaluate {
+        prepareInplaceWebAppFolder {
+        }
+    }
+
+    contextPath = '/piano-test'
+    managedClassReload = false
+    httpEnabled = true
+    httpsEnabled = false
+    httpsPort = 8443
+    httpPort = 8081
+    debugPort = 5006
+    statusPort = 7443
+    servicePort = 9443
+    debugSuspend = false
+    scanInterval = 5
+    recompileOnSourceChange = true
+    fastReload = rootDir
+    redeployMode = 'restart'
+    interactiveMode = 'rebuildAndRestartOnKeyPress'
+    servletContainer = 'jetty9.4'
+}
+
+war {
+    doFirst {
+        manifest {
+            attributes("Implementation-Title": project.name, "Implementation-Version": version)
+        }
+    }
+    baseName 'piano-test'
+}
+
+repositories {
+    mavenLocal()
+    maven { url "https://plugins.gradle.org/m2/" }
+    jcenter()
+}
